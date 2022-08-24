@@ -424,7 +424,7 @@ license.licensee = {
 
 license.starts_at         = Date.new(2000, 1, 1)
 license.restrictions  = {
-  plan: 'ultimate',
+  plan: 'Ultimate',
   active_user_count: 100000000,
 }
 
