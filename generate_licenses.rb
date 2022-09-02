@@ -21,11 +21,12 @@ license.licensee = {
   "Email"   => "tcook@apple.com"
 }
 
-license.starts_at       = Date.new(1976, 4, 1)
-license.expires_at      = Date.new(8848, 4, 1)
-license.restrictions    = {
-  plan: 'Ultimate',
-  active_user_count: 1145141919810,
+license.starts_at         = Date.new(1976, 4, 1)
+license.expires_at        = Date.new(2500, 4, 1)
+
+license.restrictions      = {
+  plan: 'ultimate',
+  active_user_count: 2147483647,
 }
 
 data = license.export
