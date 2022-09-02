@@ -1,26 +1,31 @@
-require 'openssl'
-require_relative 'lib/license.rb'
+# GitLab License Generator
 
 LICENSE_TARGET_PRIVATE_KEY = "license_key"
 LICENSE_TARGET_PUBLIC_KEY = "license_key.pub"
 TARGET_LICENSE_FILE = 'result.gitlab-license'
 
-puts "[i] gitlab license generator - core v2.2.1"
-puts ""
+puts "[*] Booting generator"
+
+require 'openssl'
+
+require_relative 'lib/license.rb'
+CORE_LIB_VERSION = '2.2.1'
+
+puts "[i] Using core library version #{CORE_LIB_VERSION}"
 
 if !File.exist?(LICENSE_TARGET_PRIVATE_KEY) || !File.exist?(LICENSE_TARGET_PUBLIC_KEY)
-  puts "[*] generating RSA keys..."
+  puts "[*] Generating RSA keys..."
   key = OpenSSL::PKey::RSA.new(2048)
   File.write(LICENSE_TARGET_PRIVATE_KEY, key.to_pem)
   File.write(LICENSE_TARGET_PUBLIC_KEY, key.public_key.to_pem)
 end
 
-puts "[*] loading RSA keys..."
+puts "[*] Loading RSA keys..."
 
 public_key = OpenSSL::PKey::RSA.new File.read(LICENSE_TARGET_PUBLIC_KEY)
 private_key = OpenSSL::PKey::RSA.new File.read(LICENSE_TARGET_PRIVATE_KEY)
 
-puts "[*] building license..."
+puts "[*] Building license..."
 
 Gitlab::License.encryption_key = private_key
 
@@ -54,9 +59,13 @@ license.restrictions      = {
   # required, just dont overflow
 }
 
-puts "[*] calling export"
+puts "[*] Calling export..."
 
 puts ""
+puts "====================================================="
+
+puts JSON.pretty_generate(JSON.parse(license.to_json))
+
 puts "====================================================="
 
 data = license.export
@@ -66,3 +75,4 @@ puts "====================================================="
 puts ""
 
 puts "[*] License generated successfully!"
+puts "[*] License file: #{TARGET_LICENSE_FILE}"
