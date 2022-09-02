@@ -1,10 +1,4 @@
 #!/bin/bash
 
-set -e
-
-cd "$(dirname "$0")"
-
-# ruby ./generate_keys.rb
+cd "$(dirname "$0")" || exit 1
 ruby ./generate_licenses.rb
-
-echo "done"
