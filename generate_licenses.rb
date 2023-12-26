@@ -1,31 +1,47 @@
-# GitLab License Generator
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+require 'openssl'
+require_relative 'lib/license.rb'
+puts "[i] lib gitlab-license: #{Gitlab::License::VERSION}"
+
+OUTPUT_DIR = ARGV[0]
+puts "[*] output dir: #{OUTPUT_DIR}"
 
 LICENSE_TARGET_PRIVATE_KEY = "license_key"
 LICENSE_TARGET_PUBLIC_KEY = "license_key.pub"
 TARGET_LICENSE_FILE = 'result.gitlab-license'
+TARGET_PLAIN_LICENSE_FILE = 'result.gitlab-license.json'
 
-puts "[*] Booting generator"
+FEATURE_LIST = []
+if ARGV[1].nil?
+  puts "[i] you can provide a list of feature to be enabled inside license"
+else
+  FEATURE_LIST_FILE = ARGV[1]
+  File.open(FEATURE_LIST_FILE).each do |line|
+    FEATURE_LIST.push(line.chomp)
+  end
+  FEATURE_LIST.uniq!
+end
+puts "[*] loaded #{FEATURE_LIST.length} features"
 
-require 'openssl'
+Dir.chdir(OUTPUT_DIR)
+puts "[*] switching working dir: #{Dir.pwd}"
 
-require_relative 'lib/license.rb'
-CORE_LIB_VERSION = '2.2.1'
-
-puts "[i] Using core library version #{CORE_LIB_VERSION}"
-
+puts "[*] generating license..."
 if !File.exist?(LICENSE_TARGET_PRIVATE_KEY) || !File.exist?(LICENSE_TARGET_PUBLIC_KEY)
-  puts "[*] Generating RSA keys..."
+  puts "[*] generating rsa key pair..."
   key = OpenSSL::PKey::RSA.new(2048)
   File.write(LICENSE_TARGET_PRIVATE_KEY, key.to_pem)
   File.write(LICENSE_TARGET_PUBLIC_KEY, key.public_key.to_pem)
 end
 
-puts "[*] Loading RSA keys..."
+puts "[*] loading key pair..."
 
 public_key = OpenSSL::PKey::RSA.new File.read(LICENSE_TARGET_PUBLIC_KEY)
 private_key = OpenSSL::PKey::RSA.new File.read(LICENSE_TARGET_PRIVATE_KEY)
 
-puts "[*] Building license..."
+puts "[*] building license..."
 
 Gitlab::License.encryption_key = private_key
 
@@ -59,20 +75,17 @@ license.restrictions      = {
   # required, just dont overflow
 }
 
-puts "[*] Calling export..."
+if !license.valid?
+  puts "[E] license validation failed!"
+  puts "[E] #{license.errors}"
+  exit 1
+end
 
-puts ""
-puts "====================================================="
+puts "[*] exporting license file..."
 
-puts JSON.pretty_generate(JSON.parse(license.to_json))
-
-puts "====================================================="
+File.open(TARGET_PLAIN_LICENSE_FILE, "w") { |f| f.write(JSON.pretty_generate(JSON.parse(license.to_json))) }
 
 data = license.export
 File.open(TARGET_LICENSE_FILE, "w") { |f| f.write(data) }
 
-puts "====================================================="
-puts ""
-
-puts "[*] License generated successfully!"
-puts "[*] License file: #{TARGET_LICENSE_FILE}"
+puts "[*] done"

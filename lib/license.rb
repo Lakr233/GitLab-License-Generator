@@ -15,6 +15,7 @@ module Gitlab
 
     class << self
       attr_reader :encryption_key
+      attr_reader :fallback_decryption_keys
       @encryption_key = nil
 
       def encryption_key=(key)
@@ -22,6 +23,19 @@ module Gitlab
 
         @encryption_key = key
         @encryptor = nil
+      end
+
+      def fallback_decryption_keys=(keys)
+        unless keys
+          @fallback_decryption_keys = nil
+          return
+        end
+
+        unless keys.is_a?(Enumerable) && keys.all? { |key| key.is_a?(OpenSSL::PKey::RSA) }
+          raise ArgumentError, 'Invalid fallback RSA encryption keys provided.'
+        end
+
+        @fallback_decryption_keys = Array(keys)
       end
 
       def encryptor
@@ -33,11 +47,7 @@ module Gitlab
 
         data = Boundary.remove_boundary(data)
 
-        begin
-          license_json = encryptor.decrypt(data)
-        rescue Encryptor::Error
-          raise ImportError, 'License data could not be decrypted.'
-        end
+        license_json = decrypt_with_fallback_keys(data)
 
         begin
           attributes = JSON.parse(license_json)
@@ -47,6 +57,20 @@ module Gitlab
 
         new(attributes)
       end
+
+      def decrypt_with_fallback_keys(data)
+        keys_to_try = Array(encryption_key)
+        keys_to_try += fallback_decryption_keys if fallback_decryption_keys
+
+        keys_to_try.each do |decryption_key|
+          decryptor = Encryptor.new(decryption_key)
+          return decryptor.decrypt(data)
+        rescue Encryptor::Error
+          next
+        end
+
+        raise ImportError, 'License data could not be decrypted.'
+      end
     end
 
     attr_reader :version
@@ -54,7 +78,8 @@ module Gitlab
                   :notify_users_at, :block_changes_at, :last_synced_at, :next_sync_at,
                   :activated_at, :restrictions, :cloud_licensing_enabled,
                   :offline_cloud_licensing_enabled, :auto_renew_enabled, :seat_reconciliation_enabled,
-                  :operational_metrics_enabled, :generated_from_customers_dot
+                  :operational_metrics_enabled, :generated_from_customers_dot,
+                  :generated_from_cancellation
 
     alias_method :issued_at, :starts_at
     alias_method :issued_at=, :starts_at=
@@ -65,43 +90,30 @@ module Gitlab
 
     def valid?
       if !licensee || !licensee.is_a?(Hash) || licensee.empty?
-        puts "Invalid License - licensee is not a hash or is empty"
         false
       elsif !starts_at || !starts_at.is_a?(Date)
-        puts "Invalid License - starts_at is not a date"
         false
       elsif !expires_at && !gl_team_license? && !jh_team_license?
-        puts "Invalid License - expires_at is not a date"
         false
       elsif expires_at && !expires_at.is_a?(Date)
-        puts "Invalid License - expires_at is not a date"
         false
       elsif notify_admins_at && !notify_admins_at.is_a?(Date)
-        puts "Invalid License - notify_admins_at is not a date"
         false
       elsif notify_users_at && !notify_users_at.is_a?(Date)
-        puts "Invalid License - notify_users_at is not a date"
         false
       elsif block_changes_at && !block_changes_at.is_a?(Date)
-        puts "Invalid License - block_changes_at is not a date"
         false
       elsif last_synced_at && !last_synced_at.is_a?(DateTime)
-        puts "Invalid License - last_synced_at is not a datetime"
         false
       elsif next_sync_at && !next_sync_at.is_a?(DateTime)
-        puts "Invalid License - next_sync_at is not a datetime"
         false
       elsif activated_at && !activated_at.is_a?(DateTime)
-        puts "Invalid License - activated_at is not a datetime"
         false
       elsif restrictions && !restrictions.is_a?(Hash)
-        puts "Invalid License - restrictions is not a hash"
         false
       elsif !cloud_licensing? && offline_cloud_licensing?
-        puts "Invalid License - offline_cloud_licensing_enabled is true but cloud_licensing_enabled is false"
         false
       else
-        puts "License is valid"
         true
       end
     end
@@ -174,6 +186,10 @@ module Gitlab
       generated_from_customers_dot == true
     end
 
+    def generated_from_cancellation?
+      generated_from_cancellation == true
+    end
+
     def gl_team_license?
       licensee['Company'].to_s.match?(/GitLab/i) && licensee['Email'].to_s.end_with?('@gitlab.com')
     end
@@ -216,6 +232,7 @@ module Gitlab
       hash['operational_metrics_enabled'] = operational_metrics?
 
       hash['generated_from_customers_dot'] = generated_from_customers_dot?
+      hash['generated_from_cancellation'] = generated_from_cancellation?
 
       hash['restrictions'] = restrictions if restricted?
 
@@ -265,6 +282,7 @@ module Gitlab
         seat_reconciliation_enabled
         operational_metrics_enabled
         generated_from_customers_dot
+        generated_from_cancellation
       ].each do |attr_name|
         public_send("#{attr_name}=", attributes[attr_name] == true)
       end
