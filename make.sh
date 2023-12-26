@@ -9,7 +9,7 @@ if [ ! -f ".root" ]; then
 fi
 WORKING_DIR=$(pwd)
 
-mkdir temp || true
+mkdir temp 2> /dev/null || true
 
 echo "[*] fetching ruby gem version..."
 RB_GEM_NAME="gitlab-license"
@@ -28,7 +28,7 @@ echo "[*] gitlab-license version: $RB_GEM_VERSION"
 RB_GEM_DOWNLOAD_URL="https://rubygems.org/downloads/gitlab-license-$RB_GEM_VERSION.gem"
 RB_GEM_DOWNLOAD_PATH=$(pwd)/temp/gem/gitlab-license.gem
 mkdir -p $(dirname $RB_GEM_DOWNLOAD_PATH)
-curl -L $RB_GEM_DOWNLOAD_URL -o $RB_GEM_DOWNLOAD_PATH
+curl -L $RB_GEM_DOWNLOAD_URL -o $RB_GEM_DOWNLOAD_PATH 1> /dev/null 2> /dev/null
 pushd $(dirname $RB_GEM_DOWNLOAD_PATH) > /dev/null
 tar -xzf gitlab-license.gem
 tar -xzf data.tar.gz
@@ -63,19 +63,38 @@ fi
 
 echo "[*] updating gitlab source code..."
 pushd $GITLAB_SOURCE_CODE_DIR > /dev/null
-git clean -fdx -f
-git reset --hard
-git pull
+git clean -fdx -f > /dev/null
+git reset --hard > /dev/null
+git pull > /dev/null
 popd > /dev/null
 
+BUILD_DIR=$(pwd)/build
+mkdir -p $BUILD_DIR
+
 echo "[*] scanning features..."
-FEATURE_LIST_FILE=$(pwd)/temp/features.txt
+FEATURE_LIST_FILE=$BUILD_DIR/features.json
 rm -f $FEATURE_LIST_FILE || true
-./feature.scan.py $GITLAB_SOURCE_CODE_DIR $FEATURE_LIST_FILE
+./src/scan.features.rb \
+    -o $FEATURE_LIST_FILE \
+    -s $GITLAB_SOURCE_CODE_DIR
+
+echo "[*] generating key pair..."
+PUBLIC_KEY_FILE=$BUILD_DIR/public.key
+PRIVATE_KEY_FILE=$BUILD_DIR/private.key
+./src/generator.keys.rb \
+    --public-key $PUBLIC_KEY_FILE \
+    --private-key $PRIVATE_KEY_FILE \
+    || true # ignore error if key already exists
 
 echo "[*] generating license..."
-OUTPUT_DIR=$(pwd)/output
-mkdir -p $OUTPUT_DIR
-ruby ./generate_licenses.rb $OUTPUT_DIR $FEATURE_LIST_FILE
+LICENSE_FILE=$BUILD_DIR/license.data
+LICENSE_JSON_FILE=$BUILD_DIR/license.json
+
+./src/generator.license.rb \
+    -f $FEATURE_LIST_FILE \
+    --public-key $PUBLIC_KEY_FILE \
+    --private-key $PRIVATE_KEY_FILE \
+    -o $LICENSE_FILE \
+    --plain-license $LICENSE_JSON_FILE
 
 echo "[*] done $(basename $0)"
