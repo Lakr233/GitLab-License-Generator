@@ -87,7 +87,7 @@ PRIVATE_KEY_FILE=$BUILD_DIR/private.key
     || true # ignore error if key already exists
 
 echo "[*] generating license..."
-LICENSE_FILE=$BUILD_DIR/license.data
+LICENSE_FILE=$BUILD_DIR/result.gitlab-license
 LICENSE_JSON_FILE=$BUILD_DIR/license.json
 
 ./src/generator.license.rb \
