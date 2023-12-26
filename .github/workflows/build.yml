@@ -14,12 +14,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@latest
+        uses: actions/checkout@4.1.1
       - name: Build
         run: |
           ./make.sh
       - name: Upload Artifacts
-        uses: actions/upload-artifact@latest
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build
