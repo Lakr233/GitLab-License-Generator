@@ -81,10 +81,13 @@ rm -f $FEATURE_LIST_FILE || true
 echo "[*] generating key pair..."
 PUBLIC_KEY_FILE=$BUILD_DIR/public.key
 PRIVATE_KEY_FILE=$BUILD_DIR/private.key
-./src/generator.keys.rb \
-    --public-key $PUBLIC_KEY_FILE \
-    --private-key $PRIVATE_KEY_FILE \
-    || true # ignore error if key already exists
+cp -f ./keys/public.key $PUBLIC_KEY_FILE
+cp -f ./keys/private.key $PRIVATE_KEY_FILE
+
+# execute following command to generate new keys
+# ./src/generator.keys.rb \
+#     --public-key $PUBLIC_KEY_FILE \
+#     --private-key $PRIVATE_KEY_FILE
 
 echo "[*] generating license..."
 LICENSE_FILE=$BUILD_DIR/result.gitlab-license
