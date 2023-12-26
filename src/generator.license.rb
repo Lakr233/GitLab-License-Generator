@@ -108,11 +108,13 @@ for feature in FEATURE_LIST
   license.restrictions[feature] = 2147483647
 end
 
+puts "[*] validating license..."
 if !license.valid?
   puts "[E] license validation failed!"
   puts "[E] #{license.errors}"
   exit 1
 end
+puts "[*] license validated"
 
 puts "[*] exporting license file..."
 
