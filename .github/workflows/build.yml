@@ -1,0 +1,20 @@
+name: Ruby Gem
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  rebuild:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.1.1
+      - name: Build
+        run: |
+          ./make.sh
