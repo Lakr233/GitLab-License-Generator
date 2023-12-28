@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 echo "[i] GitLab License Generator"
 echo "[i] Copyright (c) 2023 Tim Cook, All Rights Not Reserved"
