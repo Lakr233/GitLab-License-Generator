@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+echo "[i] GitLab License Generator"
+echo "[i] Copyright (c) 2023 Tim Cook, All Rights Not Reserved"
+
 set -e
 
 cd "$(dirname "$0")"
@@ -30,8 +33,8 @@ RB_GEM_DOWNLOAD_PATH=$(pwd)/temp/gem/gitlab-license.gem
 mkdir -p $(dirname $RB_GEM_DOWNLOAD_PATH)
 curl -L $RB_GEM_DOWNLOAD_URL -o $RB_GEM_DOWNLOAD_PATH 1> /dev/null 2> /dev/null
 pushd $(dirname $RB_GEM_DOWNLOAD_PATH) > /dev/null
-tar -xzf gitlab-license.gem
-tar -xzf data.tar.gz
+tar -xf gitlab-license.gem
+tar -xf data.tar.gz
 
 if [ ! -f "./lib/gitlab/license.rb" ]; then
     echo "[!] failed to locate gem file, aborting..."
