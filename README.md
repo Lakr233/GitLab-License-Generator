@@ -59,6 +59,12 @@ See [GitLab Document](https://archives.docs.gitlab.com/16.3/ee/administration/li
 
 > In GitLab 14.7.x to 14.9.x, you can add the license file with the UI. In GitLab 14.1.x to 14.7, if you have already activated your subscription with an activation code, you cannot access Add License from the Admin Area. You must access Add License directly from the URL, <YourGitLabURL>/admin/license/new.
 
+### Disable Service Ping
+
+> Service Ping is a GitLab process that collects and sends a weekly payload to GitLab. The payload provides important high-level data that helps our product, support, and sales teams understand how GitLab is used.
+
+See (GitLab Documents)[https://docs.gitlab.com/ee/development/internal_analytics/service_ping/] for details.
+
 ## LICENSE
 
 This project is licensed under the WTFPL License.
