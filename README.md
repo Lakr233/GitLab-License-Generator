@@ -63,7 +63,7 @@ See [GitLab Document](https://archives.docs.gitlab.com/16.3/ee/administration/li
 
 > Service Ping is a GitLab process that collects and sends a weekly payload to GitLab. The payload provides important high-level data that helps our product, support, and sales teams understand how GitLab is used.
 
-See (GitLab Documents)[https://docs.gitlab.com/ee/development/internal_analytics/service_ping/] for details.
+See [GitLab Documents](https://docs.gitlab.com/ee/development/internal_analytics/service_ping) for details.
 
 ## LICENSE
 
