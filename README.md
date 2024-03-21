@@ -2,7 +2,7 @@
 
 This project aims to generate a GitLab License for development purpose. If you encounter any problem, please solve them yourself.
 
-Last tested on GitLab v16.9.1-ee .
+Last tested on GitLab v16.9.2-ee .
 
 ## Principles
 
