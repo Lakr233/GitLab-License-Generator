@@ -49,8 +49,23 @@ popd > /dev/null
 
 pushd lib > /dev/null
 echo "[*] patching lib requirements gem..."
+
+# Determine the operating system
+OS_TYPE="$(uname -s)"
+
+case "$OS_TYPE" in 
+    Linux*) 
+        sed_i_cmd="sed -i";;
+    Darwin*)
+        sed_i_cmd="sed -i ''";;
+    *) 
+        echo "Unsupported OS: $OS_TYPE";
+        exit 1;;
+esac
+
 # replace `require 'gitlab/license/` with `require 'license/` to make it work
-find . -type f -exec sed -i '' 's/require '\''gitlab\/license\//require_relative '\''license\//g' {} \;
+find . -type f -exec $sed_i_cmd 's/require '\''gitlab\/license\//require_relative '\''license\//g' {} \;
+
 popd > /dev/null
 
 echo "[*] updated gem"
