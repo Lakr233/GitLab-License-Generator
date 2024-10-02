@@ -1,72 +1,155 @@
+<div align="center">
+
 # GitLab License Generator
 
-This project aims to generate a GitLab License for development purpose. If you encounter any problem, please solve them yourself.
+<p align="center">
+  <a href="./README.md">English</a> |
+  <a href="./README_FR.md">Français</a>
+</p>
 
-Last tested on GitLab v17.4.1-ee .
+</div>
+
+## Description
+
+**GitLab License Generator** This project generates a GitLab license for **development purposes**. If you encounter any problems, please troubleshoot them on your own.
+
+Last tested on GitLab v17.4.1-ee.
 
 ## Principles
 
-**src/generator.keys.rb**
+### **src/generator.keys.rb**
 
-The GitLab uses public/private key pair to encrypt the license. The public key is shipped with the GitLab distro and the private key is kept privately. The license it self is just a json dictionary. Since GitLab made their code open source, we can easily generate a license by our own.
+GitLab uses a public/private key pair to encrypt its license. The public key is shipped with the GitLab distribution, while the private key is kept secure. The license itself is simply a JSON dictionary. Since GitLab has made its code open-source, we can easily generate our own license.
 
-**src/generator.license.rb**
+### **src/generator.license.rb**
 
-The `lib` folder is extracted from GitLab's source. It is used for building and validating the license. Script `src/generator.license.rb` will load it.
+The `lib` folder is extracted from GitLab's source code. It is used to build and validate the license. The script `src/generator.license.rb` loads this functionality.
 
-**src/scan.features.rb**
+### **src/scan.features.rb**
 
-The features is extracted from a object full of constant. The most powerful plan for a license is ultimate, but features like geo mirror is not included in any type of the plan. So here by we add them manually.
+Features are extracted from an object filled with constants. The most comprehensive plan for a license is **Ultimate**, but features like Geo Mirroring are not included in any standard plan. Therefore, we manually add these features.
 
 ## Usage
 
-Follow the procedure below to generate and install a license for your development use.
+### Prerequisites
 
-### Get License
+Before starting, ensure your environment is properly configured.
 
-**GitHub Action**
+#### 1. Install Ruby and gem
+To run this project, you need **Ruby** and the **gem** package manager.
 
-Navigate to GitHub Action to download an artifact.
+- **On Linux (Ubuntu/Debian)**:
+  ```bash
+  sudo apt update
+  sudo apt install ruby-full
+  ```
 
-**make.sh**
+- **On macOS** (via Homebrew):
+  ```bash
+  brew install ruby
+  ```
 
-This script is only tested on macOS. To build on Linux or other platform, you need to setup ruby with gem. 
+#### 2. Install Bundler and necessary gems
+After installing Ruby, you need to install **Bundler** to manage Ruby dependencies.
 
-### Install Test Key
-
-You will need to replace the public key shipped within GitLab distro. It is located at `/opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub` most of the time.
-
-If you are using Docker, there is a easy way to do this.
-
-```yml
-image: "gitlab/gitlab-ee:latest"
-# ...
-volumes:
-    - "public.key:/opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub"
+```bash
+gem install bundler
 ```
 
-### Install License
+#### 3. Install the `gitlab-license` gem
+The project requires the `gitlab-license` gem, which will be automatically downloaded and used by the script.
 
-See [GitLab Document](https://archives.docs.gitlab.com/16.3/ee/administration/license_file.html). Follow are part of the document.
+```bash
+gem install gitlab-license
+```
 
-- Sign in to GitLab as an administrator.
-- On the left sidebar, expand the top-most chevron.
-- Select Admin Area.
-- Select Settings > General.
-- or entering the key.
-- Select the Terms of Service checkbox.
-- Select Add license.
+### Steps to Generate the GitLab License
 
-> In GitLab 14.7.x to 14.9.x, you can add the license file with the UI. In GitLab 14.1.x to 14.7, if you have already activated your subscription with an activation code, you cannot access Add License from the Admin Area. You must access Add License directly from the URL, <YourGitLabURL>/admin/license/new.
+#### 1. Clone the project repository
+Clone this project to your local machine.
 
-### Disable Service Ping
+```bash
+git clone https://github.com/Lakr233/GitLab-License-Generator.git
+cd GitLab-License-Generator
+```
 
-> Service Ping is a GitLab process that collects and sends a weekly payload to GitLab. The payload provides important high-level data that helps our product, support, and sales teams understand how GitLab is used.
+#### 2. Run the `make.sh` script
+Once all the prerequisites are met, run the script:
 
-See [GitLab Document](https://docs.gitlab.com/ee/development/internal_analytics/service_ping) for details.
+```bash
+./make.sh
+```
+
+The script will perform the following actions:
+- Download and extract the `gitlab-license` gem.
+- Copy and modify the required files.
+- Clone the GitLab source code from GitLab.com.
+- Generate a public/private key pair.
+- Generate a GitLab license.
+
+#### 3. Replace the public key in GitLab
+The script generates a public key located in `build/public.key`. You need to replace GitLab’s existing public key with this newly generated one to ensure the license is accepted.
+
+- **If GitLab is installed on your server**:
+  ```bash
+  sudo cp ./build/public.key /opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub
+  sudo gitlab-ctl reconfigure
+  sudo gitlab-ctl restart
+  ```
+
+- **If GitLab is installed via Docker**:
+  Modify your `docker-compose.yml` file to mount the new public key inside the container:
+
+  ```yaml
+  volumes:
+    - "./build/public.key:/opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub"
+  ```
+
+  Then restart the container:
+  ```bash
+  docker-compose down
+  docker-compose up -d
+  ```
+
+#### 4. Install the license in GitLab
+Once the public key is replaced, log in to GitLab’s admin interface to install the generated license.
+
+1. Log in to GitLab as an administrator.
+2. Navigate to the **Admin Area** from the upper-right corner.
+3. Go to **Settings > General** and upload the generated license file (`build/result.gitlab-license`).
+4. Check the **Terms of Service** checkbox and click **Add License**.
+
+If necessary, you can directly access the license upload page via:
+```
+<YourGitLabURL>/admin/license/new
+```
+
+#### 5. Disable Service Ping (optional)
+If you want to disable GitLab’s usage data collection (Service Ping), modify GitLab’s configuration file:
+
+- Open the configuration file:
+  ```bash
+  sudo nano /etc/gitlab/gitlab.rb
+  ```
+
+- Add the following line:
+  ```bash
+  gitlab_rails['usage_ping_enabled'] = false
+  ```
+
+- Reconfigure and restart GitLab:
+  ```bash
+  sudo gitlab-ctl reconfigure
+  sudo gitlab-ctl restart
+  ```
+
+### Troubleshooting
+
+- **HTTP 502 Error**:
+  If you encounter this error, wait for GitLab to finish starting up (it may take some time).
 
 ## LICENSE
 
-This project is licensed under the WTFPL License.
+This project is licensed under the **WTFPL License**.
 
-Copyrigth (c) 2023, Tim Cook, All Rights Not Reserved.
+Copyright (c) 2023, Tim Cook, All Rights Not Reserved.
