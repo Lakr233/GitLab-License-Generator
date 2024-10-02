@@ -1,6 +1,17 @@
-# Générateur de Licence GitLab
+<div align="center">
 
-Ce projet permet de générer une licence GitLab à des **fins de développement**. Si vous rencontrez des problèmes, merci de les résoudre par vous-même.
+# GitLab License Generator
+
+<p align="center">
+  <a href="./README.md">English</a> |
+  <a href="./README_FR.md">Français</a>
+</p>
+
+</div>
+
+## Description
+
+**GitLab License Generator** Ce projet permet de générer une licence GitLab à des **fins de développement**. Si vous rencontrez des problèmes, merci de les résoudre par vous-même.
 
 Dernier test effectué sur GitLab v17.4.1-ee.
 
