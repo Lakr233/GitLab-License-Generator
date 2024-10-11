@@ -3,8 +3,9 @@
 # GitLab License Generator
 
 <p align="center">
-  <a href="./README.md">English</a> |
-  <a href="./README_FR.md">Français</a>
+  <a href="README.md">English</a> |
+  <a href="lang/README_FR.md">Français</a> |
+  <a href="lang/README_RU.md">Russian</a>
 </p>
 
 </div>
@@ -13,7 +14,7 @@
 
 **GitLab License Generator** This project generates a GitLab license for **development purposes**. If you encounter any problems, please troubleshoot them on your own.
 
-Last tested on GitLab v17.4.1-ee.
+> Last tested on GitLab v17.4.2-ee.
 
 ## Principles
 
