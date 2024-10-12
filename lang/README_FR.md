@@ -3,8 +3,7 @@
 # GitLab License Generator
 
 <p align="center">
-  <a href="./README.md">English</a> |
-  <a href="./README_FR.md">Français</a>
+  <a href="../README.md">English</a>
 </p>
 
 </div>
