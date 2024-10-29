@@ -74,7 +74,7 @@ if license_file_path.nil? || public_key_path.nil? || private_key_path.nil?
   exit 1
 end
 
-if license_plan != 'ultimate' &&  license_plan != 'premium' &&  license_plan != 'starter' &&
+if license_plan != 'ultimate' &&  license_plan != 'premium' &&  license_plan != 'starter'
   puts "[!] license plan is set to #{license_plan} which is not one of [ultimate, premium, starter]"
   puts "[!] use -h for help"
   exit 1
