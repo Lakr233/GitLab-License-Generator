@@ -49,15 +49,15 @@ OptionParser.new do |opts|
     license_email = v
   end
   
-  opts.on("--license-plan PLAN", "Specify license plan (optional) [#{license_plan}(default),premium,starter]") do |v|
+  opts.on("--license-plan PLAN", "Specify license plan (optional) [#{license_plan} (default), premium, starter]") do |v|
     license_plan = v
   end
   
-  opts.on("--license-user-count COUNT", "Specify license user count (optional) [#{license_user_count}(default)]") do |v|
+  opts.on("--license-user-count COUNT", "Specify license user count (optional) [#{license_user_count} (default)]") do |v|
     license_user_count = v.to_i
   end
   
-  opts.on("--license-expire-year YEAR", "Specify license expire year (optional) [#{license_expire_year}(default)]") do |v|
+  opts.on("--license-expire-year YEAR", "Specify license expire year (optional) [#{license_expire_year} (default)]") do |v|
     license_expire_year = v.to_i
   end
   
