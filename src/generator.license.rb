@@ -37,27 +37,27 @@ OptionParser.new do |opts|
     license_json_path = File.expand_path(v)
   end
 
-  opts.on("--license-name <Name>", "Specify license name (optional) [#{license_name}]") do |v|
+  opts.on("--license-name NAME", "Specify license name (optional) [#{license_name}]") do |v|
     license_name = v
   end
 
-  opts.on("--license-company <Company Name>", "Specify license company (optional) [#{license_company}]") do |v|
+  opts.on("--license-company COMPANY", "Specify license company (optional) [#{license_company}]") do |v|
     license_company = v
   end
 
-  opts.on("--license-email <Email Address>", "Specify license email address (optional) [#{license_email}]") do |v|
+  opts.on("--license-email EMAIL-ADDRESS", "Specify license email address (optional) [#{license_email}]") do |v|
     license_email = v
   end
   
-  opts.on("--license-plan <Plan>", "Specify license plan (optional) [#{license_plan}(default),premium,starter]") do |v|
+  opts.on("--license-plan PLAN", "Specify license plan (optional) [#{license_plan}(default),premium,starter]") do |v|
     license_plan = v
   end
   
-  opts.on("--license-user-count <Email Address>", "Specify license user count (optional) [#{license_user_count}(default)]") do |v|
+  opts.on("--license-user-count COUNT", "Specify license user count (optional) [#{license_user_count}(default)]") do |v|
     license_user_count = v.to_i
   end
   
-  opts.on("--license-expire-year <Year>", "Specify license expire year (optional) [#{license_expire_year}(default)]") do |v|
+  opts.on("--license-expire-year YEAR", "Specify license expire year (optional) [#{license_expire_year}(default)]") do |v|
     license_expire_year = v.to_i
   end
   
