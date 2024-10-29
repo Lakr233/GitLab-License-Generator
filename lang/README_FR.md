@@ -12,7 +12,7 @@
 
 **GitLab License Generator** Ce projet permet de générer une licence GitLab à des **fins de développement**. Si vous rencontrez des problèmes, merci de les résoudre par vous-même.
 
-Dernier test effectué sur GitLab v17.4.1-ee.
+Dernier test effectué sur GitLab v17.5.1-ee.
 
 ## Principes
 
