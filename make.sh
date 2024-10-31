@@ -79,7 +79,6 @@ echo "[*] fetching gitlab source code..."
 GITLAB_SOURCE_CODE_DIR=$(pwd)/temp/src
 
 mkdir -p "$GITLAB_SOURCE_CODE_DIR"
-chmod 0755 -R "$GITLAB_SOURCE_CODE_DIR"
 echo "[*] downloading features file..."
 curl -L https://gitlab.com/gitlab-org/gitlab/-/raw/master/ee/app/models/gitlab_subscriptions/features.rb?inline=false -o "$GITLAB_SOURCE_CODE_DIR/features.rb"
 
