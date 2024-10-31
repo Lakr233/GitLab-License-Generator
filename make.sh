@@ -2,7 +2,12 @@
 
 echo "[i] GitLab License Generator"
 echo "[i] Copyright (c) 2023 Tim Cook, All Rights Not Reserved"
-
+LICENSE_NAME="${LICENSE_NAME:-"Tim Cook"}"
+LICENSE_COMPANY="${LICENSE_COMPANY:-"Apple Computer, Inc."}"
+LICENSE_EMAIL="${LICENSE_EMAIL:-"tcook@apple.com"}"
+LICENSE_PLAN="${LICENSE_PLAN:-'ultimate'}"
+LICENSE_USER_COUNT="${LICENSE_USER_COUNT:-'2147483647'}"
+LICENSE_EXPIRE_YEAR="${LICENSE_EXPIRE_YEAR:-'2500'}"
 set -e
 
 cd "$(dirname "$0")"
@@ -109,6 +114,12 @@ LICENSE_JSON_FILE=$BUILD_DIR/license.json
     --public-key $PUBLIC_KEY_FILE \
     --private-key $PRIVATE_KEY_FILE \
     -o $LICENSE_FILE \
+    --license-name "$LICENSE_NAME" \
+    --license-company "$LICENSE_COMPANY" \
+    --license-email "$LICENSE_EMAIL" \
+    --license-plan "$LICENSE_PLAN" \
+    --license-user-count "$LICENSE_USER_COUNT" \
+    --license-expire-year "$LICENSE_EXPIRE_YEAR" \
     --plain-license $LICENSE_JSON_FILE
 
 echo "[*] done $(basename $0)"
