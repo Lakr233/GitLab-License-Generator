@@ -32,25 +32,46 @@ Features are extracted from an object filled with constants. The most comprehens
 
 ## Usage
 
-### Prerequisites
+### Using Docker image (Zero setup)
+
+Using this method license files are generated under `./license` directory
+> Please note that in standard docker installations, owner of the files generated in license directory will be root
+
+```bash
+docker run --rm -it \
+  -v "./license:/license-generator/build" \
+  -e LICENSE_NAME="Tim Cook" \
+  -e LICENSE_COMPANY="Apple Computer, Inc." \
+  -e LICENSE_EMAIL="tcook@apple.com" \
+  -e LICENSE_PLAN="ultimate" \
+  -e LICENSE_USER_COUNT="2147483647" \
+  -e LICENSE_EXPIRE_YEAR="2500" \
+  ghcr.io/lakr233/gitlab-license-generator:main
+```
+
+### Manual: Prerequisites
 
 Before starting, ensure your environment is properly configured.
 
 #### 1. Install Ruby and gem
+
 To run this project, you need **Ruby** and the **gem** package manager.
 
 - **On Linux (Ubuntu/Debian)**:
+
   ```bash
   sudo apt update
   sudo apt install ruby-full
   ```
 
 - **On macOS** (via Homebrew):
+
   ```bash
   brew install ruby
   ```
 
 #### 2. Install Bundler and necessary gems
+
 After installing Ruby, you need to install **Bundler** to manage Ruby dependencies.
 
 ```bash
@@ -58,6 +79,7 @@ gem install bundler
 ```
 
 #### 3. Install the `gitlab-license` gem
+
 The project requires the `gitlab-license` gem, which will be automatically downloaded and used by the script.
 
 ```bash
@@ -67,6 +89,7 @@ gem install gitlab-license
 ### Steps to Generate the GitLab License
 
 #### 1. Clone the project repository
+
 Clone this project to your local machine.
 
 ```bash
@@ -75,6 +98,7 @@ cd GitLab-License-Generator
 ```
 
 #### 2. Run the `make.sh` script
+
 Once all the prerequisites are met, run the script:
 
 ```bash
@@ -82,6 +106,7 @@ Once all the prerequisites are met, run the script:
 ```
 
 The script will perform the following actions:
+
 - Download and extract the `gitlab-license` gem.
 - Copy and modify the required files.
 - Clone the GitLab source code from GitLab.com.
@@ -89,9 +114,11 @@ The script will perform the following actions:
 - Generate a GitLab license.
 
 #### 3. Replace the public key in GitLab
+
 The script generates a public key located in `build/public.key`. You need to replace GitLab’s existing public key with this newly generated one to ensure the license is accepted.
 
 - **If GitLab is installed on your server**:
+
   ```bash
   sudo cp ./build/public.key /opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub
   sudo gitlab-ctl reconfigure
@@ -107,12 +134,14 @@ The script generates a public key located in `build/public.key`. You need to rep
   ```
 
   Then restart the container:
+
   ```bash
   docker-compose down
   docker-compose up -d
   ```
 
 #### 4. Install the license in GitLab
+
 Once the public key is replaced, log in to GitLab’s admin interface to install the generated license.
 
 1. Log in to GitLab as an administrator.
@@ -121,24 +150,29 @@ Once the public key is replaced, log in to GitLab’s admin interface to install
 4. Check the **Terms of Service** checkbox and click **Add License**.
 
 If necessary, you can directly access the license upload page via:
+
 ```
 <YourGitLabURL>/admin/license/new
 ```
 
 #### 5. Disable Service Ping (optional)
+
 If you want to disable GitLab’s usage data collection (Service Ping), modify GitLab’s configuration file:
 
 - Open the configuration file:
+
   ```bash
   sudo nano /etc/gitlab/gitlab.rb
   ```
 
 - Add the following line:
+
   ```bash
   gitlab_rails['usage_ping_enabled'] = false
   ```
 
 - Reconfigure and restart GitLab:
+
   ```bash
   sudo gitlab-ctl reconfigure
   sudo gitlab-ctl restart
