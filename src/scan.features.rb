@@ -7,8 +7,12 @@ require 'optparse'
 OptionParser.new do |opts|
     opts.banner = "Usage: scan.features.rb [options]"
 
-    opts.on("-s", "--src-dir PATH", "Specify gitlab source dir (required)") do |v|
-        GITLAB_SRC_DIR = File.expand_path(v)
+    opts.on("-s", "--src-dir PATH", "Specify gitlab source dir (required if --features-file is ommited)") do |v|
+        GITLAB_FEATURES_FILE="#{File.expand_path(v)}/ee/app/models/gitlab_subscriptions/features.rb"
+    end
+
+    opts.on("-f", "--features-file PATH", "Specify gitlab features path (required if --src-dir is ommited)") do |v|
+        GITLAB_FEATURES_FILE = File.expand_path(v)
     end
 
     opts.on("-o", "--output PATH", "Output to json file (required)") do |v|
@@ -21,12 +25,12 @@ OptionParser.new do |opts|
     end
 end
 .parse!
-
-if GITLAB_SRC_DIR.nil? || EXPORT_JSON_FILE.nil?
+if GITLAB_FEATURES_FILE.nil? || EXPORT_JSON_FILE.nil?
     puts "[!] missing required options"
     puts "[!] use -h for help"
     exit 1
 end
+puts "Reading features from #{GITLAB_FEATURES_FILE}"
 
 def ignore_exception
     begin
@@ -37,7 +41,7 @@ end
 
 puts "[*] loading features.rb..."
 ignore_exception do
-    require_relative "#{GITLAB_SRC_DIR}/ee/app/models/gitlab_subscriptions/features.rb"
+    require_relative "#{GITLAB_FEATURES_FILE}"
 end
 
 ALL_FEATURES = []
