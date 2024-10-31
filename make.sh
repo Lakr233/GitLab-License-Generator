@@ -72,7 +72,7 @@ Darwin*)
 esac
 
 # replace `require 'gitlab/license/` with `require 'license/` to make it work
-find . -type f -exec "$sed_i_cmd" 's/require '\''gitlab\/license\//require_relative '\''license\//g' {} \;
+find . -type f -exec $sed_i_cmd 's/require '\''gitlab\/license\//require_relative '\''license\//g' {} \;
 
 popd >/dev/null
 
