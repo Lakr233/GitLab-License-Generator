@@ -2,7 +2,12 @@
 
 echo "[i] GitLab License Generator"
 echo "[i] Copyright (c) 2023 Tim Cook, All Rights Not Reserved"
-
+LICENSE_NAME="${LICENSE_NAME:-"Tim Cook"}"
+LICENSE_COMPANY="${LICENSE_COMPANY:-"Apple Computer, Inc."}"
+LICENSE_EMAIL="${LICENSE_EMAIL:-"tcook@apple.com"}"
+LICENSE_PLAN="${LICENSE_PLAN:-ultimate}"
+LICENSE_USER_COUNT="${LICENSE_USER_COUNT:-2147483647}"
+LICENSE_EXPIRE_YEAR="${LICENSE_EXPIRE_YEAR:-2500}"
 set -e
 
 cd "$(dirname "$0")"
@@ -71,20 +76,13 @@ popd > /dev/null
 echo "[*] updated gem"
 
 echo "[*] fetching gitlab source code..."
-GITLAB_SOURCE_CODE_DIR=$(pwd)/temp/src/
-if [ -d "$GITLAB_SOURCE_CODE_DIR" ]; then
-    echo "[*] gitlab source code already exists, skipping cloning..."
-else
-    echo "[*] cloning gitlab source code..."
-    git clone https://gitlab.com/gitlab-org/gitlab.git $GITLAB_SOURCE_CODE_DIR
-fi
+GITLAB_SOURCE_CODE_DIR=$(pwd)/temp/src
 
-echo "[*] updating gitlab source code..."
-pushd $GITLAB_SOURCE_CODE_DIR > /dev/null
-git clean -fdx -f > /dev/null
-git reset --hard > /dev/null
-git pull > /dev/null
-popd > /dev/null
+mkdir -p "$GITLAB_SOURCE_CODE_DIR"
+chmod 0755 -R "$GITLAB_SOURCE_CODE_DIR"
+echo "[*] downloading features file..."
+curl -L https://gitlab.com/gitlab-org/gitlab/-/raw/master/ee/app/models/gitlab_subscriptions/features.rb?inline=false -o "$GITLAB_SOURCE_CODE_DIR/features.rb"
+
 
 BUILD_DIR=$(pwd)/build
 mkdir -p $BUILD_DIR
@@ -94,7 +92,7 @@ FEATURE_LIST_FILE=$BUILD_DIR/features.json
 rm -f $FEATURE_LIST_FILE || true
 ./src/scan.features.rb \
     -o $FEATURE_LIST_FILE \
-    -s $GITLAB_SOURCE_CODE_DIR
+    -f "$GITLAB_SOURCE_CODE_DIR/features.rb"
 
 echo "[*] generating key pair..."
 PUBLIC_KEY_FILE=$BUILD_DIR/public.key
@@ -116,6 +114,12 @@ LICENSE_JSON_FILE=$BUILD_DIR/license.json
     --public-key $PUBLIC_KEY_FILE \
     --private-key $PRIVATE_KEY_FILE \
     -o $LICENSE_FILE \
+    --license-name "$LICENSE_NAME" \
+    --license-company "$LICENSE_COMPANY" \
+    --license-email "$LICENSE_EMAIL" \
+    --license-plan "$LICENSE_PLAN" \
+    --license-user-count "$LICENSE_USER_COUNT" \
+    --license-expire-year "$LICENSE_EXPIRE_YEAR" \
     --plain-license $LICENSE_JSON_FILE
 
 echo "[*] done $(basename $0)"
