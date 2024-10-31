@@ -37,6 +37,8 @@ Features are extracted from an object filled with constants. The most comprehens
 Using this method license files are generated under `./license` directory
 > Please note that in standard docker installations, owner of the files generated in license directory will be root
 
+#### Method (1): Pull image
+
 ```bash
 docker run --rm -it \
   -v "./license:/license-generator/build" \
@@ -47,6 +49,22 @@ docker run --rm -it \
   -e LICENSE_USER_COUNT="2147483647" \
   -e LICENSE_EXPIRE_YEAR="2500" \
   ghcr.io/lakr233/gitlab-license-generator:main
+```
+
+#### Method (2): Build image
+
+```bash
+git clone https://github.com/Lakr233/GitLab-License-Generator.git
+docker build GitLab-License-Generator -t gitlab-license-generator:main
+docker run --rm -it \
+  -v "./license:/license-generator/build" \
+  -e LICENSE_NAME="Tim Cook" \
+  -e LICENSE_COMPANY="Apple Computer, Inc." \
+  -e LICENSE_EMAIL="tcook@apple.com" \
+  -e LICENSE_PLAN="ultimate" \
+  -e LICENSE_USER_COUNT="2147483647" \
+  -e LICENSE_EXPIRE_YEAR="2500" \
+  gitlab-license-generator:main
 ```
 
 ### Manual: Prerequisites
