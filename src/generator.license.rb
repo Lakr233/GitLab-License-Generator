@@ -148,6 +148,9 @@ license.restrictions      = {
   # required, just dont overflow
 }
 
+license.cloud_licensing_enabled = true
+license.offline_cloud_licensing_enabled = true
+
 # restricted_attr will access restrictions
 # add_ons will access restricted_attr(:add_ons, {})
 # so here by we inject all features into restrictions
