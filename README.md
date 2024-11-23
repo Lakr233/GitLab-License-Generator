@@ -14,7 +14,7 @@
 
 **GitLab License Generator** This project generates a GitLab license for **development purposes**. If you encounter any problems, please troubleshoot them on your own.
 
-> Last tested on GitLab v17.5.1-ee.
+> Last tested on GitLab v17.6.0-ee.
 
 ## Principles
 
@@ -163,7 +163,7 @@ The script generates a public key located in `build/public.key`. You need to rep
 Once the public key is replaced, log in to GitLab’s admin interface to install the generated license.
 
 1. Log in to GitLab as an administrator.
-2. Navigate to the **Admin Area** from the upper-right corner.
+2. Navigate to the **Admin Area** from the bottom-left corner.
 3. Go to **Settings > General** and upload the generated license file (`build/result.gitlab-license`).
 4. Check the **Terms of Service** checkbox and click **Add License**.
 
