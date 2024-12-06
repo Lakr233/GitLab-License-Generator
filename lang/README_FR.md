@@ -26,7 +26,9 @@ Le dossier `lib` est extrait du code source de GitLab. Il est utilisé pour gén
 
 ### **src/scan.features.rb**
 
-Les fonctionnalités sont extraites d'un objet contenant des constantes. Le plan le plus complet est **Ultimate**, mais des fonctionnalités comme le Geo Mirroring ne sont incluses dans aucun plan standard. Nous les ajoutons donc manuellement.
+**Ce fichier a été retiré suite à une demande de retrait DMCA.**
+
+~~Les fonctionnalités sont extraites d'un objet contenant des constantes. Le plan le plus complet est **Ultimate**, mais des fonctionnalités comme le Geo Mirroring ne sont incluses dans aucun plan standard. Nous les ajoutons donc manuellement.~~
 
 ## Utilisation
 

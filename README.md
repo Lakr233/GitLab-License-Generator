@@ -28,7 +28,9 @@ The `lib` folder is extracted from GitLab's source code. It is used to build and
 
 ### **src/scan.features.rb**
 
-Features are extracted from an object filled with constants. The most comprehensive plan for a license is **Ultimate**, but features like Geo Mirroring are not included in any standard plan. Therefore, we manually add these features.
+Removed with a script to generate empty json file due to DMCA takedown request.
+
+~~Features are extracted from an object filled with constants. The most comprehensive plan for a license is **Ultimate**, but features like Geo Mirroring are not included in any standard plan. Therefore, we manually add these features.~~
 
 ## Usage
 
